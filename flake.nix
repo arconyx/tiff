@@ -27,10 +27,6 @@
             inotify-tools
             bun
             tailwindcss_4
-
-            # we literally only use this for maintaining the dependencies
-            # because nixpkgs doesn't support bun yet
-            nodejs
           ];
         };
       });
