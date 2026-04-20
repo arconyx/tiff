@@ -3,7 +3,9 @@
 //// The complete set of qualities is basically a key-value
 //// store where the values are all integers.
 
+import gleam/dynamic/decode
 import gleam/int
+import gleam/json.{type Json}
 import gleam/order
 
 /// A quality is an integer value constrained to a given range.
@@ -47,4 +49,28 @@ pub fn range(minimum min: Int, maximum max: Int, default default: Int) -> Range 
 /// Clamp the input value to the valid range of the quality
 pub fn clamp(value v: Int, with quality: Quality) -> Int {
   int.clamp(v, quality.range.min, quality.range.max)
+}
+
+pub fn to_json(quality: Quality) -> Json {
+  [
+    #("id", json.string(quality.id)),
+    #("name", json.string(quality.name)),
+    #("description", json.string(quality.description)),
+    #("min", json.int(quality.range.min)),
+    #("max", json.int(quality.range.max)),
+    #("default", json.int(quality.range.default)),
+  ]
+  |> json.object
+}
+
+pub fn quality_decoder() -> decode.Decoder(Quality) {
+  use id <- decode.field("id", decode.string)
+  use name <- decode.field("name", decode.string)
+  use description <- decode.optional_field("description", "", decode.string)
+  use min <- decode.optional_field("min", 0, decode.int)
+  // The default max is JavaScript's MAX_SAFE_INTEGER
+  use max <- decode.optional_field("max", 9_007_199_254_740_991, decode.int)
+  use default <- decode.optional_field("default", 0, decode.int)
+  Quality(id:, name:, description:, range: Range(min:, max:, default:))
+  |> decode.success
 }
