@@ -15,6 +15,7 @@ version = "0.0.1"
 [dependencies]
 lustre = ">= 5.6.0 and < 6.0.0"
 gleam_stdlib = ">= 0.71.0 and < 1.0.0"
+gleam_json = ">= 3.1.0 and < 4.0.0"
 
 [dev_dependencies]
 lustre_dev_tools = ">= 2.3.6 and < 3.0.0"
