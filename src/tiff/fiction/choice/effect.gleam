@@ -2,8 +2,10 @@
 //// Set the value of a quality.
 //// The value will be clamped to the valid range.
 
+import gleam/dict
 import gleam/dynamic/decode
 import gleam/json.{type Json}
+import tiff/fiction/validation.{type ValidationError}
 
 /// An effect mutates the game state.
 /// They are used as the outcome of choices.
@@ -49,5 +51,35 @@ pub fn effect_decoder() -> decode.Decoder(Effect) {
       |> decode.success
     }
     _ -> decode.failure(QualityAdd("placeholder", 0), "UnrecognisedEffectId")
+  }
+}
+
+pub fn effect_validator(
+  effect: Effect,
+  valid_quality_ids: dict.Dict(String, Nil),
+) -> List(ValidationError) {
+  case effect {
+    QualityAdd(quality_id:, ..) ->
+      case dict.has_key(valid_quality_ids, quality_id) {
+        True -> []
+        False -> [
+          validation.InvalidQualityReference(
+            ["quality_add"],
+            "Effect",
+            quality_id,
+          ),
+        ]
+      }
+    QualitySet(quality_id:, ..) ->
+      case dict.has_key(valid_quality_ids, quality_id) {
+        True -> []
+        False -> [
+          validation.InvalidQualityReference(
+            ["quality_set"],
+            "Effect",
+            quality_id,
+          ),
+        ]
+      }
   }
 }

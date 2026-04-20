@@ -1,8 +1,10 @@
+import gleam/dict
 import gleam/dynamic/decode
 import gleam/json.{type Json}
 import gleam/list
 import tiff/fiction/choice/effect.{type Effect}
 import tiff/fiction/choice/requirement.{type Requirement}
+import tiff/fiction/validation.{type ValidationError}
 
 pub type Choice {
   Choice(
@@ -74,4 +76,39 @@ fn target_decoder() -> decode.Decoder(Target) {
     "parent" -> decode.success(Parent)
     id -> decode.success(Named(id))
   }
+}
+
+fn target_validator(
+  target: Target,
+  valid_storylet_ids: dict.Dict(String, Nil),
+) -> List(ValidationError) {
+  case target {
+    Self | Parent -> []
+    Named(id) ->
+      case dict.has_key(valid_storylet_ids, id) {
+        True -> []
+        False -> [validation.InvalidStoryletReference(["named"], "Target", id)]
+      }
+  }
+}
+
+pub fn choice_validator(
+  choice: Choice,
+  valid_storylet_ids: dict.Dict(String, Nil),
+  valid_quality_ids: dict.Dict(String, Nil),
+) -> List(ValidationError) {
+  // use <- validation.with_parent("choice")
+  let target_errors =
+    target_validator(choice.goto, valid_storylet_ids)
+    |> validation.add_parent_to_all("goto")
+  let effect_errors =
+    list.flat_map(choice.effects, effect.effect_validator(_, valid_quality_ids))
+    |> validation.add_parent_to_all("effects")
+  let requirement_errors =
+    list.flat_map(choice.requirements, requirement.requirement_validator(
+      _,
+      valid_quality_ids,
+    ))
+    |> validation.add_parent_to_all("requirements")
+  list.flatten([target_errors, effect_errors, requirement_errors])
 }

@@ -1,7 +1,9 @@
+import gleam/dict
 import gleam/dynamic/decode
 import gleam/json.{type Json}
 import gleam/list
 import tiff/fiction/choice.{type Choice}
+import tiff/fiction/validation.{type ValidationError}
 
 pub type Storylet {
   Storylet(id: String, body: List(String), choices: List(Choice))
@@ -26,4 +28,18 @@ pub fn storylet_decoder() -> decode.Decoder(Storylet) {
   )
   use choices <- decode.field("choices", decode.list(choice.choice_decoder()))
   decode.success(Storylet(id:, body:, choices:))
+}
+
+pub fn storylet_validator(
+  storylet: Storylet,
+  valid_storylet_ids: dict.Dict(String, Nil),
+  valid_quality_ids: dict.Dict(String, Nil),
+) -> List(ValidationError) {
+  storylet.choices
+  |> list.flat_map(choice.choice_validator(
+    _,
+    valid_storylet_ids,
+    valid_quality_ids,
+  ))
+  |> validation.add_parent_to_all("choices")
 }
