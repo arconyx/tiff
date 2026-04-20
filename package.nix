@@ -62,13 +62,18 @@ let
       outputHashAlgo = if hash == "" then "sha256" else null;
       outputHash = hash;
     };
+
+  gleamToml = builtins.fromTOML (builtins.readFile ./gleam.toml);
 in
 stdenv.mkDerivation (finalAttrs: {
-  name = "tiff";
+  pname = gleamToml.name;
+  version = gleamToml.version;
 
   src = lib.cleanSource ./.;
 
-  gleamDeps = mkGleamDeps finalAttrs.name finalAttrs.src finalAttrs.gleamDepsHash;
+  gleamDeps =
+    mkGleamDeps "${finalAttrs.pname}-${finalAttrs.version}" finalAttrs.src
+      finalAttrs.gleamDepsHash;
   gleamDepsHash = "";
 
   nativeBuildInputs = [
