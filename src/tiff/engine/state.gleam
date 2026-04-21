@@ -1,6 +1,9 @@
 import gleam/dict.{type Dict}
+import gleam/result
 import tiff/fiction/choice
+import tiff/fiction/quality.{type Quality}
 
+/// Persistent player state
 pub opaque type State {
   State(history: List(String), qualities: Dict(String, Int))
 }
@@ -27,4 +30,20 @@ pub fn goto(state: State, target: choice.Target) -> State {
         history -> State(..state, history: [id, ..history])
       }
   }
+}
+
+/// Get the current value of a quality. Returns the default if it is unset.
+pub fn get_quality(state: State, quality: Quality) -> Int {
+  state.qualities
+  |> dict.get(quality.id)
+  |> result.unwrap(quality |> quality.default)
+}
+
+/// Set the value of a quality. The input is clamped to the valid range
+/// for the quality.
+pub fn set_quality(state: State, quality: Quality, to value: Int) -> State {
+  let qualities =
+    state.qualities
+    |> dict.insert(quality.id, value |> quality.clamp(quality))
+  State(..state, qualities:)
 }

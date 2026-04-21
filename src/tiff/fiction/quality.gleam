@@ -74,3 +74,7 @@ pub fn quality_decoder() -> decode.Decoder(Quality) {
   Quality(id:, name:, description:, range: Range(min:, max:, default:))
   |> decode.success
 }
+
+pub fn default(quality: Quality) -> Int {
+  quality.range.default
+}
