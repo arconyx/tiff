@@ -1,0 +1,135 @@
+{
+	"qualities": [
+		{
+			"id": "save",
+			"name": "Save the Empress"
+		},
+		{
+			"id": "become",
+			"name": "Become the Empress"
+		},
+		{
+			"id": "destroy",
+			"name": "Destroy the Empress"
+		}
+	],
+	"storylets": [
+		{
+			"id": "home",
+			"body": "Home is behind you. Home is a memory, now, a distant farming station and distant people and all of it rotting and dying. You remember the hollow looks on your parent's face as they saw you off, the gauntness and the bitterness. They had stared, blankly, cheeks grey and sallow, as you boarded the cargoship. Your mother gave you a small, fragile smile.",
+			"choices": [
+				{
+					"id": "bring",
+					"body": "You offered to bring them with you.",
+					"response": [
+						"You close your eyes for a moment, and push the memory away. You're here now. ",
+						"The empire waits."
+					],
+					"goto": "root"
+				},
+				{
+					"id": "survive",
+					"body": "They wouldn't have survived the trip.",
+					"response": [
+						"You close your eyes for a moment, and push the memory away. You're here now. ",
+						"The empire waits."
+					],
+					"goto": "root"
+				}
+			]
+		},
+		{
+			"id": "root",
+			"body": [
+				"The engine of the ship rumbles through the darkness. The interior lights flicker in time with its spluttering, coughing. You stand clutching the overhead rail, tasting stale and recycled air as the ship trembles - inhaling, exhaling, sharing air in this great metal lung.",
+				"You stand alone. And you wait.",
+				"Anticipation and anxiety turn over in your gut as the ship begins its final approach, the interior lights all switching to a bright, burning red, drowning everything in deep light.",
+				"The ship heaves a coughing fit as the engine shudders, almost knocking you off-balance, and the metal digs into your fingers as you keep hold. You grit your teeth.",
+				"Finally, all is quiet. The lung of the ship is still as the grave.",
+				"A hiss and the screech of steel on steel, and light slips into a crack in the wall. It grows as the panel falls away, and air - new air, fresh air - rushes in to fill the ship. You gasp, and let it fill your own body. This air tastes like sourness, oil and copper, but it is not dead. It is breathing, and so are you.",
+				"Then you see it.",
+				"The mouth of the Empire, the ship port, is splayed before you, a tangled mass of durasteel paths, dull concrete, and noise. Neon lights blare directions, flash warning, and bathe passengers in sickly glow. Everywhere, passengers come and go, board and disembark, and through it all they move in waves and organic patterns between platforms.",
+				"Beyond, not quite obscured by the towers surrounding the port mouth, sits the Empire herself, a sprawling cityscape stretching on to the horizon. It, too, is a mess of concrete and durasteel - at least, on the surface. You know better.",
+				"You take a deep breath, tasting the metalic air. You know what you're here to do."
+			],
+			"choices": [
+				{
+					"id": "become",
+					"body": "You're here to become.",
+					"response": "Anticipation and anxiety give way to a hollowness in your chest. It is an absence you know well. You have come to the Empire to fill it at last.",
+					"goto": "home",
+					"effects": [
+						{
+							"effect": "quality_add",
+							"quality": "become",
+							"value": 1
+						}
+					]
+				},
+				{
+					"id": "save",
+					"body": "You're here to save.",
+					"response": "Your eyes tip upwards, to the stars. Then down, to the Empire. You were called here. It's time to extend a hand.",
+					"goto": "home",
+					"effects": [
+						{
+							"effect": "quality_add",
+							"quality": "save",
+							"value": 1
+						}
+					]
+				},
+				{
+					"id": "destroy",
+					"body": "You're here to destroy.",
+					"response": "Your lips stretch into something that might be called a smile, if you didn't look so closely.",
+					"goto": "home",
+					"effects": [
+						{
+							"effect": "quality_add",
+							"quality": "destroy",
+							"value": 1
+						}
+					]
+				},
+				{
+					"id": "test",
+					"body": "You're here to test.",
+					"goto": "home"
+				},
+				{
+					"id": "quality_test",
+					"body": "You're here to test quality locks.",
+					"requirements": [
+						{
+							"type": "compare_quality",
+							"quality": "become",
+							"value": 1,
+							"op": ">="
+						}
+					],
+					"goto": "home"
+				},
+				{
+					"id": "quality_test",
+					"body": "This is twice locked.",
+					"requirements": [
+						{
+							"type": "compare_quality",
+							"quality": "become",
+							"value": 2,
+							"op": ">="
+						},
+						{
+							"type": "compare_quality",
+							"quality": "save",
+							"value": 1,
+							"op": "="
+						}
+					],
+					"goto": "home"
+				}
+			]
+		}
+	]
+}

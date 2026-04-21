@@ -1,5 +1,5 @@
-import gleam/io
+import tiff/app
 
 pub fn main() -> Nil {
-  io.println("Hello from tiff!")
+  app.main()
 }
