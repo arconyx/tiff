@@ -20,6 +20,11 @@ pub type ValidationError {
     broken_type: String,
     duplicate_id: String,
   )
+  ForbiddenStoryletId(
+    location: List(String),
+    broken_type: String,
+    forbidden_id: String,
+  )
   InvalidStoryletReference(
     location: List(String),
     broken_type: String,
@@ -40,6 +45,8 @@ fn add_parent(error: ValidationError, parent: String) -> ValidationError {
       DuplicateStoryletId(..o, location: [parent, ..location])
     DuplicateQualityId(location:, ..) as o ->
       DuplicateQualityId(..o, location: [parent, ..location])
+    ForbiddenStoryletId(location:, ..) as o ->
+      ForbiddenStoryletId(..o, location: [parent, ..location])
     InvalidStoryletReference(location:, ..) as o ->
       InvalidStoryletReference(..o, location: [parent, ..location])
     InvalidQualityReference(location:, ..) as o ->
@@ -64,6 +71,8 @@ pub fn to_string(error: ValidationError) -> String {
       "Duplicate storylet id '" <> duplicate_id <> "'"
     DuplicateQualityId(duplicate_id:, ..) ->
       "Duplicate quality id '" <> duplicate_id <> "'"
+    ForbiddenStoryletId(forbidden_id:, ..) ->
+      "Storylets cannot have the id '" <> forbidden_id <> "'"
     InvalidStoryletReference(invalid_ref:, ..) ->
       "Reference to invalid storylet '" <> invalid_ref <> "'"
     InvalidQualityReference(invalid_ref:, ..) ->

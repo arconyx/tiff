@@ -35,11 +35,21 @@ pub fn storylet_validator(
   valid_storylet_ids: dict.Dict(String, Nil),
   valid_quality_ids: dict.Dict(String, Nil),
 ) -> List(ValidationError) {
-  storylet.choices
-  |> list.flat_map(choice.choice_validator(
-    _,
-    valid_storylet_ids,
-    valid_quality_ids,
-  ))
-  |> validation.add_parent_to_all("choices")
+  let id_errors = case storylet.id {
+    "parent" | "self" -> [
+      validation.ForbiddenStoryletId(["id"], "Storylet", storylet.id),
+    ]
+    _ -> []
+  }
+
+  let choice_errors =
+    storylet.choices
+    |> list.flat_map(choice.choice_validator(
+      _,
+      valid_storylet_ids,
+      valid_quality_ids,
+    ))
+    |> validation.add_parent_to_all("choices")
+
+  list.flatten([id_errors, choice_errors])
 }
