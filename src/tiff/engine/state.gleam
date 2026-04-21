@@ -1,4 +1,5 @@
 import gleam/dict.{type Dict}
+import gleam/dynamic/decode
 import gleam/result
 import tiff/fiction/choice
 import tiff/fiction/quality.{type Quality}
@@ -6,6 +7,15 @@ import tiff/fiction/quality.{type Quality}
 /// Persistent player state
 pub opaque type State {
   State(history: List(String), qualities: Dict(String, Int))
+}
+
+pub fn state_decoder() -> decode.Decoder(State) {
+  use history <- decode.field("history", decode.list(decode.string))
+  use qualities <- decode.field(
+    "qualities",
+    decode.dict(decode.string, decode.int),
+  )
+  decode.success(State(history:, qualities:))
 }
 
 /// Goto the given target.

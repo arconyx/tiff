@@ -1,4 +1,5 @@
 import gleam/bool
+import gleam/dynamic/decode
 import gleam/function
 import gleam/list
 import gleam/option
@@ -19,6 +20,19 @@ pub opaque type Engine {
     storylets: IdDict(String, Storylet),
     qualities: IdDict(String, Quality),
   )
+}
+
+pub fn engine_decoder() -> decode.Decoder(Engine) {
+  use player_state <- decode.field("player_state", state.state_decoder())
+  use storylets <- decode.field(
+    "storylets",
+    id_dict.id_dict_decoder(decode.string, storylet.storylet_decoder()),
+  )
+  use qualities <- decode.field(
+    "qualities",
+    id_dict.id_dict_decoder(decode.string, quality.quality_decoder()),
+  )
+  decode.success(Engine(player_state:, storylets:, qualities:))
 }
 
 pub type Error {

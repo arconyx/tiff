@@ -2,10 +2,12 @@
 //// an id field in such a way that we get to benefit from the fast lookups of
 //// hash tables.
 ////
-//// It is read-only because that is all we need but it could be extended with
-//// dictionary mutation methods by using the embedded key function.
+//// It is read-only because that is all we need.
+//// We could support mutability by embedding the key function but then
+//// we have to figure out a decoder for a function.
 
 import gleam/dict.{type Dict}
+import gleam/dynamic/decode
 import gleam/list
 import gleam/order
 
@@ -14,7 +16,15 @@ import gleam/order
 ///
 /// This is a wrapper around `dict.Dict`.
 pub opaque type IdDict(k, v) {
-  IdDict(dict: Dict(k, v), key: fn(v) -> k)
+  IdDict(dict: Dict(k, v))
+}
+
+pub fn id_dict_decoder(
+  key_decoder: decode.Decoder(k),
+  value_decoder: decode.Decoder(v),
+) -> decode.Decoder(IdDict(k, v)) {
+  use dict <- decode.field("dict", decode.dict(key_decoder, value_decoder))
+  decode.success(IdDict(dict:))
 }
 
 /// Generate a dictionary where the key is derived from the value
@@ -28,7 +38,7 @@ pub fn from_list(list: List(v), key: fn(v) -> k) -> IdDict(k, v) {
   list
   |> list.map(fn(li) { #(key(li), li) })
   |> dict.from_list
-  |> IdDict(key)
+  |> IdDict
 }
 
 /// Turn a dictionary into a list of values sorted by key.
