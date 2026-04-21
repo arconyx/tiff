@@ -15,7 +15,6 @@ pub opaque type State {
 /// identically to `choice.Named(current_storylet_id)`.
 /// e.g 'storylet1' -> goto 'storylet2' -> goto 'storylet2' -> goto parent
 /// will end on 'storylet1'.
-/// 
 pub fn goto(state: State, target: choice.Target) -> State {
   case target {
     choice.Self -> state
@@ -24,6 +23,7 @@ pub fn goto(state: State, target: choice.Target) -> State {
         [] -> state
         [_self, ..rest] -> State(..state, history: rest)
       }
+    // TODO: This doesn't validate the target exists
     choice.Named(id:) ->
       case state.history {
         [self, ..] if self == id -> state
