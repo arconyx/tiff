@@ -66,3 +66,7 @@ pub fn set_quality(state: State, quality: Quality, to value: Int) -> State {
     |> dict.insert(quality.id, value |> quality.clamp(quality))
   State(..state, qualities:)
 }
+
+pub fn new() -> State {
+  State([], dict.new())
+}

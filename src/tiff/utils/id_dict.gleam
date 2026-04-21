@@ -55,3 +55,7 @@ pub fn get(dict: IdDict(k, v), key: k) -> Result(v, Nil) {
   dict.dict
   |> dict.get(key)
 }
+
+pub fn none() -> IdDict(k, v) {
+  dict.new() |> IdDict
+}

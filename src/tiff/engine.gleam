@@ -196,3 +196,7 @@ pub fn get_choice_response(choice: ValidChoice) -> List(String) {
   let ValidChoice(choice) = choice
   choice.response
 }
+
+pub fn none() {
+  Engine(state.new(), id_dict.none(), id_dict.none())
+}
