@@ -30,6 +30,7 @@ pub type ValidationError {
     broken_type: String,
     invalid_ref: String,
   )
+  NoRootStorylet(location: List(String), broken_type: String)
 }
 
 /// Prepend parent location to `location field`
@@ -43,6 +44,8 @@ fn add_parent(error: ValidationError, parent: String) -> ValidationError {
       InvalidStoryletReference(..o, location: [parent, ..location])
     InvalidQualityReference(location:, ..) as o ->
       InvalidQualityReference(..o, location: [parent, ..location])
+    NoRootStorylet(location:, ..) as o ->
+      NoRootStorylet(..o, location: [parent, ..location])
   }
 }
 
@@ -65,6 +68,7 @@ pub fn to_string(error: ValidationError) -> String {
       "Reference to invalid storylet '" <> invalid_ref <> "'"
     InvalidQualityReference(invalid_ref:, ..) ->
       "Reference to invalid quality '" <> invalid_ref <> "'"
+    NoRootStorylet(..) -> "No root storylet found"
   }
   let path = string.join(error.location, ".")
   "Error in " <> error.broken_type <> " at " <> path <> ": " <> inner

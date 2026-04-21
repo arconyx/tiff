@@ -48,6 +48,12 @@ pub fn validate(fiction: Fiction) -> List(ValidationError) {
     duplicate_qualities
     |> list.map(validation.DuplicateQualityId(["qualities"], "Fiction", _))
 
+  // A storylet with the id 'root' is required
+  let root_error = case dict.has_key(storylet_ids, "root") {
+    True -> []
+    False -> [validation.NoRootStorylet(["storylets"], "Fiction")]
+  }
+
   // Validate all choice gotos point to valid storylets
   // Validate all effects refer to valid qualities
   // Validate all requirements refer to valid qualities
@@ -55,7 +61,7 @@ pub fn validate(fiction: Fiction) -> List(ValidationError) {
     fiction.storylets
     |> list.flat_map(storylet.storylet_validator(_, storylet_ids, quality_ids))
 
-  list.flatten([dupe_sid_errors, dupe_qid_errors, storylet_errors])
+  list.flatten([dupe_sid_errors, dupe_qid_errors, root_error, storylet_errors])
 }
 
 /// Process a list of ids and check for uniqueness.
