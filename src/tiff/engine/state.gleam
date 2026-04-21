@@ -32,6 +32,15 @@ pub fn goto(state: State, target: choice.Target) -> State {
   }
 }
 
+/// Return the id of the current storylet according to the internal history
+/// stack. If the stack is empty returns `'root'`.
+pub fn get_current_storylet_id(state: State) -> String {
+  case state.history {
+    [] -> "root"
+    [first, ..] -> first
+  }
+}
+
 /// Get the current value of a quality. Returns the default if it is unset.
 pub fn get_quality(state: State, quality: Quality) -> Int {
   state.qualities
