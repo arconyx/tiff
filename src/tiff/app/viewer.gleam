@@ -1,6 +1,7 @@
 import gleam/dynamic/decode
 import gleam/list
 import gleam/option
+import gleam/string
 import lustre
 import lustre/attribute.{class}
 import lustre/component
@@ -159,9 +160,13 @@ fn view(model: Model) -> Element(Message) {
 }
 
 fn base_class() -> attribute.Attribute(a) {
-  class(
-    "text-black dark:text-slate-300 bg-white dark:bg-black size-full overflow-auto",
-  )
+  class(string.join(
+    [
+      "text-black", "dark:text-slate-300", "bg-white", "dark:bg-black",
+      "size-full", "overflow-auto", "px-8", "py-2",
+    ],
+    with: " ",
+  ))
 }
 
 fn view_error_message(error: Error) -> Element(Message) {
