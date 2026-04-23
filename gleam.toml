@@ -21,6 +21,9 @@ gleam_json = ">= 3.1.0 and < 4.0.0"
 [dev_dependencies]
 lustre_dev_tools = ">= 2.3.6 and < 3.0.0"
 
+[javascript]
+runtime = "bun"
+
 [tools.lustre.bin]
 bun = "system"
 tailwindcss = "system"
