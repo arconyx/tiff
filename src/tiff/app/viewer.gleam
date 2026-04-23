@@ -161,7 +161,8 @@ fn view(model: Model) -> Element(Message) {
         base_class(),
         case model.error, model.current {
           option.None, Story(body: [], ..) -> attribute.none()
-          option.Some(_), _ | option.None, _ -> event.on_click(Advance)
+          option.Some(_), _ | option.None, _ ->
+            event.on_click(Advance) |> event.stop_propagation()
         },
       ],
       [
