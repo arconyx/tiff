@@ -113,6 +113,7 @@ fn set_fiction(model: Model, fiction: fiction.Fiction) -> Model {
 }
 
 fn advance(model: Model) -> Model {
+  echo model.current
   case model.current {
     Story([], _) -> model
     Story([current, ..rest], choices) ->
@@ -121,6 +122,9 @@ fn advance(model: Model) -> Model {
         ..model.history
       ])
     Response([]) -> reset_storylet(model)
+    Response([last]) ->
+      Model(..model, history: [PastText(last), ..model.history])
+      |> reset_storylet
     Response([current, ..rest]) ->
       Model(..model, current: Response(rest), history: [
         PastText(current),
@@ -195,10 +199,19 @@ fn view_game(
   current: CurrentEntry,
   history: List(HistoryEntry),
 ) -> Element(Message) {
-  html.div([class("size-full max-w-2xl"), event.on_click(Advance)], [
-    view_history(history),
-    view_current(current),
-  ])
+  html.div(
+    [
+      class("size-full max-w-2xl"),
+      case current {
+        Story(body: [], ..) -> attribute.none()
+        _ -> event.on_click(Advance)
+      },
+    ],
+    [
+      view_history(history),
+      view_current(current),
+    ],
+  )
 }
 
 const current_text_id = "current_story_element"
