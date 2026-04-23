@@ -162,8 +162,15 @@ fn view(model: Model) -> Element(Message) {
 fn base_class() -> attribute.Attribute(a) {
   class(string.join(
     [
-      "text-black", "dark:text-slate-300", "bg-white", "dark:bg-black",
-      "size-full", "overflow-auto", "px-8", "py-2",
+      "text-black",
+      "dark:text-slate-300",
+      "bg-white",
+      "dark:bg-black",
+      "size-full",
+      "overflow-auto",
+      "px-8",
+      "py-2",
+      "font-serif",
     ],
     with: " ",
   ))

@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+@theme {
+  --font-serif: "ui-serif, Georgia, Cambria, serif";
+}
