@@ -156,12 +156,21 @@ fn view(model: Model) -> Element(Message) {
       [],
       ":host { display:block; contain: strict; max-height: 100%; max-width: 100%;}",
     ),
-    html.div([base_class()], [
-      case model.error {
-        option.Some(e) -> view_error_message(e)
-        option.None -> view_game(model.current, model.history)
-      },
-    ]),
+    html.div(
+      [
+        base_class(),
+        case model.error, model.current {
+          option.None, Story(body: [], ..) -> attribute.none()
+          option.Some(_), _ | option.None, _ -> event.on_click(Advance)
+        },
+      ],
+      [
+        case model.error {
+          option.Some(e) -> view_error_message(e)
+          option.None -> view_game(model.current, model.history)
+        },
+      ],
+    ),
   ])
 }
 
@@ -202,10 +211,6 @@ fn view_game(
   html.div(
     [
       class("size-full max-w-2xl"),
-      case current {
-        Story(body: [], ..) -> attribute.none()
-        _ -> event.on_click(Advance)
-      },
     ],
     [
       view_history(history),
