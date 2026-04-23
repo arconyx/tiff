@@ -152,10 +152,12 @@ fn view(model: Model) -> Element(Message) {
       [],
       ":host { display:block; contain: strict; max-height: 100%; max-width: 100%;}",
     ),
-    case model.error {
-      option.Some(e) -> view_error_message(e)
-      option.None -> view_game(model.current, model.history)
-    },
+    html.div([base_class()], [
+      case model.error {
+        option.Some(e) -> view_error_message(e)
+        option.None -> view_game(model.current, model.history)
+      },
+    ]),
   ])
 }
 
@@ -165,8 +167,8 @@ fn base_class() -> attribute.Attribute(a) {
       "text-black dark:text-slate-300",
       "bg-white dark:bg-black",
       "size-full overflow-auto",
-      "px-8 py-2",
       "font-serif",
+      "flex flex-row justify-center-safe",
     ],
     with: " ",
   ))
@@ -186,17 +188,14 @@ fn view_error_message(error: Error) -> Element(Message) {
       <> "'",
     ]
   }
-  html.ul(
-    [base_class(), class("text-rose-500")],
-    list.map(error_msgs, html.text),
-  )
+  html.ul([class("text-rose-500")], list.map(error_msgs, html.text))
 }
 
 fn view_game(
   current: CurrentEntry,
   history: List(HistoryEntry),
 ) -> Element(Message) {
-  html.div([base_class(), event.on_click(Advance)], [
+  html.div([class("size-full max-w-2xl"), event.on_click(Advance)], [
     view_history(history),
     view_current(current),
   ])
@@ -209,12 +208,14 @@ fn current_id() -> attribute.Attribute(a) {
 }
 
 fn view_current(current: CurrentEntry) -> Element(Message) {
-  case current {
-    Story(body: [first, ..], ..) | Response([first, ..]) ->
-      html.p([current_id()], [html.text(first)])
-    Response([]) -> element.none()
-    Story(body: [], choices:) -> view_choices(choices)
-  }
+  html.div([class("mt-2")], [
+    case current {
+      Story(body: [first, ..], ..) | Response([first, ..]) ->
+        html.p([current_id(), class("text-justify")], [html.text(first)])
+      Response([]) -> element.none()
+      Story(body: [], choices:) -> view_choices(choices)
+    },
+  ])
 }
 
 fn view_history(history: List(HistoryEntry)) -> Element(Message) {
@@ -222,18 +223,19 @@ fn view_history(history: List(HistoryEntry)) -> Element(Message) {
     history
     |> list.map(view_history_entry)
     |> list.reverse
-  html.div([class("text-slate-400")], entries)
+  html.div([class("text-slate-400 space-y-2 text-justify")], entries)
 }
 
 fn view_history_entry(entry: HistoryEntry) {
   case entry {
     PastText(text) -> html.p([], [html.text(text)])
-    SelectedChoice(text) -> html.p([class("italic")], [html.text(text)])
+    SelectedChoice(text) ->
+      html.p([class("italic text-center")], [html.text(text)])
   }
 }
 
 fn view_choices(choices: List(ValidChoice)) -> Element(Message) {
-  html.ul([current_id()], {
+  html.ul([current_id(), class("text-center")], {
     use choice <- list.map(choices)
     html.li([event.on_click(Choose(choice))], [
       html.text(choice |> engine.get_choice_body()),

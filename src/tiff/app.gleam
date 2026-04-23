@@ -60,10 +60,10 @@ fn view(model: Model) {
         html.button([event.on_click(LoadEngine)], [html.text("submit")]),
       ])
     Loaded(fiction:) ->
-      html.div([], [
+      html.div([attribute.class("bg-white dark:bg-black")], [
         viewer.element([
           attribute.property("fiction", fiction |> fiction.to_json),
-          attribute.class("w-screen h-screen"),
+          attribute.class("w-screen h-screen pt-4 pb-8"),
         ]),
       ])
     Failure(e) -> html.p([], [html.text(string.inspect(e))])
