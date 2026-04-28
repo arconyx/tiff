@@ -3,12 +3,13 @@ import gleam/string
 import lustre
 import lustre/attribute
 import lustre/effect
+import lustre/element
 import lustre/element/html
 import lustre/event
 import tiff/app/viewer
 import tiff/fiction
 
-pub fn main() {
+pub fn main() -> Nil {
   let app = lustre.application(init, update, view)
 
   let assert Ok(_) = viewer.register()
@@ -23,7 +24,7 @@ type Model {
   Failure(Error)
 }
 
-fn init(_) {
+fn init(_: a) -> #(Model, effect.Effect(b)) {
   #(Unloaded(""), effect.none())
 }
 
@@ -36,7 +37,7 @@ type Error {
   DecodeError(json.DecodeError)
 }
 
-fn update(model: Model, msg: Message) {
+fn update(model: Model, msg: Message) -> #(Model, effect.Effect(a)) {
   case model, msg {
     Unloaded(string), LoadEngine ->
       case json.parse(string, fiction.fiction_decoder()) {
@@ -48,7 +49,7 @@ fn update(model: Model, msg: Message) {
   }
 }
 
-fn view(model: Model) {
+fn view(model: Model) -> element.Element(Message) {
   case model {
     Unloaded(text) ->
       html.div([], [
