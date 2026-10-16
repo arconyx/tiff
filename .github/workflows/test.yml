@@ -13,13 +13,13 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v6.1.0
 
             - name: Install lix
-              uses: canidae-solutions/lix-quick-install-action@0a4e78dfc0a3776603d255fa4a3c9860b7880167
+              uses: canidae-solutions/lix-quick-install-action@main
 
             - name: Restore and save Nix store
-              uses: nix-community/cache-nix-action@v7
+              uses: nix-community/cache-nix-action@v7.0.2
               with:
                   primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
                   restore-prefixes-first-match: nix-${{ runner.os }}-
